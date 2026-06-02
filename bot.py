@@ -31,10 +31,13 @@ COURIERS = {
 COURIER_NAMES = ["Энгин", "Самет", "Третий"]
 
 def get_sheet(sheet_name):
-    creds = Credentials.from_service_account_file(
-        "credentials.json",
-        scopes=["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"]
-    )
+    import json
+    creds_json = os.environ.get("GOOGLE_CREDS")
+    if creds_json:
+        info = json.loads(creds_json)
+        creds = Credentials.from_service_account_info(info, scopes=["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"])
+    else:
+        creds = Credentials.from_service_account_file("credentials.json", scopes=["https://spreadsheets.google.com/feeds","https://www.googleapis.com/auth/drive"])
     gc = gspread.authorize(creds)
     sh = gc.open_by_key(SHEET_ID)
     try:
